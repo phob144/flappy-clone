@@ -1,0 +1,23 @@
+{
+	"name": "flappy-clone",
+	"version": "1.0.0",
+	"description": "a pixi.js flappy bird clone",
+	"private": "true",
+	"scripts": {
+		"start": "webpack serve",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"ts-loader": "^9.2.3",
+		"typescript": "^4.3.4",
+		"webpack": "^5.40.0",
+		"webpack-cli": "^4.7.2",
+		"webpack-dev-server": "^3.11.2"
+	},
+	"dependencies": {
+		"pixi.js": "^6.0.4"
+	}
+}
