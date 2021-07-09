@@ -43,7 +43,7 @@ export class Player implements IUpdatable, IDrawable {
     }
 
     public jump() {
-        this.velocityY -= 10;
+        this.velocityY = -20;
     }
 
     draw(delta: number): void {
@@ -51,8 +51,11 @@ export class Player implements IUpdatable, IDrawable {
     }
 
     update(delta: number): void {
-        this.velocityY += (9.81 * delta) / 1000;
+        this.velocityY += delta;
+        this.y += this.velocityY * delta;
 
-        this.y += (this.velocityY * delta) / 1000;
+        if (this.y >= 400) {
+            this.jump();
+        }
     }
 }
