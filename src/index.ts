@@ -1,9 +1,38 @@
-function init() {
-	const element = document.createElement('div');
+import * as PIXI from 'pixi.js';
+import { Graphics } from 'pixi.js';
+import { ObstacleManager } from './game/ObstacleManager';
+import { Player } from './game/Player';
 
-	element.innerHTML = 'Hello world!';
+class Game {
+    private _app: PIXI.Application;
 
-	return element;
+    constructor() {
+        this._app = new PIXI.Application({
+            width: 800,
+            height: 600,
+        });
+
+        this._manager = new ObstacleManager(4000, this._app);
+        this._player = new Player(100, 600 / 2, -10, this._app);
+
+        this._app.ticker.add((delta) => this.update(delta));
+        this._app.ticker.add((delta) => this.draw(delta));
+
+        document.body.appendChild(this._app.view);
+    }
+
+    private draw(delta: number) {
+        this._manager.draw(delta);
+        this._player.draw(delta);
+    }
+
+    private _manager: ObstacleManager;
+    private _player: Player;
+
+    private update(delta: number) {
+        this._manager.update(delta);
+        this._player.update(delta);
+    }
 }
 
-document.body.appendChild(init());
+const game = new Game();
