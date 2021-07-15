@@ -9,7 +9,7 @@ export class Hitbox {
 
     public areColliding(hitbox: Hitbox): boolean {
         for (let i = 0; i < this.rectangles.length; i++) {
-            for (let j = i + 1; j < hitbox.rectangles.length; j++) {
+            for (let j = i; j < hitbox.rectangles.length; j++) {
                 if (
                     this.areRectanglesColliding(
                         this.rectangles[i],
@@ -28,20 +28,14 @@ export class Hitbox {
         rect1: Rectangle,
         rect2: Rectangle
     ): boolean {
-        let x1 = rect2.left;
-        let y1 = rect2.top;
-        let x2 = rect2.right;
-        let y2 = rect2.bottom;
+        let result =
+            rect1.x + rect1.width > rect2.x &&
+            rect1.x < rect2.x + rect2.width &&
+            rect1.y + rect1.height > rect2.y &&
+            rect1.y < rect2.y + rect2.height;
 
-        if (
-            rect1.contains(x1, y1) ||
-            rect1.contains(x1, y2) ||
-            rect1.contains(x2, y1) ||
-            rect1.contains(x2, y2)
-        ) {
-            return true;
-        }
+        console.log(result);
 
-        return false;
+        return result;
     }
 }

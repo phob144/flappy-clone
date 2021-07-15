@@ -1,30 +1,31 @@
 import * as PIXI from 'pixi.js';
-import { Graphics, Rectangle } from 'pixi.js';
+import { Graphics, Rectangle, Container } from 'pixi.js';
 import { Hitbox } from './Hitbox';
-import { IDrawable } from './IDrawable';
 import { IUpdatable } from './IUpdatable';
+import { GameSettings } from '../const';
+import { Random } from '../utils/Random';
 
-export class Obstacle implements IUpdatable, IDrawable {
+export class Obstacle extends Container implements IUpdatable {
     public static readonly WIDTH = 100;
 
-    public x: number;
-    public velocityX: number;
-
     public hitbox: Hitbox;
+
+    private _velocityX: number;
 
     private _topTexture: Graphics;
     private _bottomTexture: Graphics;
 
-    constructor(
-        x: number,
-        velocityX: number,
-        gapY: number,
-        gapHeight: number,
-        app: PIXI.Application
-    ) {
-        const topRect = new Rectangle(x, 0, Obstacle.WIDTH, gapY);
+    constructor(gapY: number, gapHeight: number) {
+        super();
+
+        this.x = GameSettings.STAGE_WIDTH + Obstacle.WIDTH;
+        this.y = 0;
+
+        this._velocityX = -10;
+
+        const topRect = new Rectangle(this.x, 0, Obstacle.WIDTH, gapY);
         const bottomRect = new Rectangle(
-            x,
+            this.x,
             gapY + gapHeight,
             Obstacle.WIDTH,
             600 - (gapY + gapHeight)
@@ -33,7 +34,6 @@ export class Obstacle implements IUpdatable, IDrawable {
         this.hitbox = new Hitbox([topRect, bottomRect]);
 
         this._topTexture = new Graphics();
-
         this._topTexture.beginFill(0xffffff);
         this._topTexture.drawRect(
             topRect.x,
@@ -44,7 +44,6 @@ export class Obstacle implements IUpdatable, IDrawable {
         this._topTexture.endFill();
 
         this._bottomTexture = new Graphics();
-
         this._bottomTexture.beginFill(0xffffff);
         this._bottomTexture.drawRect(
             bottomRect.x,
@@ -54,28 +53,21 @@ export class Obstacle implements IUpdatable, IDrawable {
         );
         this._bottomTexture.endFill();
 
-        app.stage.addChild(this._topTexture);
-        app.stage.addChild(this._bottomTexture);
+        this.addChild(this._topTexture);
+        this.addChild(this._bottomTexture);
     }
 
-    public static createRandomObstacle(app: PIXI.Application): Obstacle {
+    public static createRandomObstacle(): Obstacle {
         const gapHeight = 600 / 4;
 
-        return new Obstacle(
-            STAGE_WIDTH,
-            OBSTACLE_VELOCITY,
-            Random.next(0, 600 - gapHeight),
-            gapHeight,
-            app
-        );
-    }
-
-    draw(delta: number): void {
-        this._topTexture.x += this.velocityX;
-        this._bottomTexture.x += this.velocityX;
+        return new Obstacle(Random.next(0, 600 - gapHeight), gapHeight);
     }
 
     update(delta: number): void {
-        this.x += this.velocityX;
+        this.x += this._velocityX;
+
+        // this surely can be done way better, but it's a simple game, so no need to sweat
+        this.hitbox.rectangles[0].x = this.x;
+        this.hitbox.rectangles[1].x = this.x;
     }
 }

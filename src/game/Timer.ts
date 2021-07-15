@@ -3,16 +3,24 @@ import { IUpdatable } from './IUpdatable';
 export class Timer implements IUpdatable {
     public stopped: boolean;
 
-    private _action: () => void;
     private _interval: number;
     private _time: number;
 
-    constructor(interval: number, action: () => void) {
-        this._action = action;
+    constructor(interval: number) {
         this._interval = interval;
         this._time = 0;
 
         this.stopped = false;
+    }
+
+    public elapsed(): boolean {
+        let result = this._time >= this._interval;
+
+        if (result) {
+            this._time -= this._interval;
+        }
+
+        return result;
     }
 
     update(delta: number): void {
@@ -20,13 +28,7 @@ export class Timer implements IUpdatable {
             return;
         }
 
-        this._time += delta;
-
-        if (this._time >= this._interval) {
-            this._time -= this._interval;
-
-            // call function on elapsed
-            this._action();
-        }
+        // console.log(delta) => "1" ???
+        this._time += 0.0166666666666;
     }
 }

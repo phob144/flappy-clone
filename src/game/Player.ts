@@ -1,61 +1,75 @@
 import * as PIXI from 'pixi.js';
-import { Graphics, Point, Rectangle } from 'pixi.js';
+import { Graphics, Point, Rectangle, Container } from 'pixi.js';
 import { Hitbox } from './Hitbox';
-import { IDrawable } from './IDrawable';
 import { IUpdatable } from './IUpdatable';
+import { GameSettings } from '../const';
 
-export class Player implements IUpdatable, IDrawable {
+export class Player extends Container implements IUpdatable {
     public static readonly WIDTH = 50;
     public static readonly HEIGHT = 50;
 
-    public x: number;
-    public y: number;
-    public velocityY: number;
+    public velocityY: number = 0;
 
     public hitbox: Hitbox;
 
     private _texture: Graphics;
 
-    constructor(
-        x: number,
-        y: number,
-        velocityY: number,
-        app: PIXI.Application
-    ) {
-        this.x = x;
-        this.y = y;
-        this.velocityY = velocityY;
+    constructor() {
+        super();
+
+        this.x = 150;
+        this.y = 325;
 
         this.hitbox = new Hitbox([
-            new Rectangle(x, y, Player.WIDTH, Player.HEIGHT),
+            new Rectangle(0, 0, Player.WIDTH, Player.HEIGHT),
         ]);
 
-        this._texture = new Graphics();
-
-        this._texture.beginFill(0xffffff);
-        this._texture.drawCircle(x, y, Player.WIDTH / 2);
-        this._texture.endFill();
-
-        this._texture.x = x;
-        this._texture.y = y;
-
-        app.stage.addChild(this._texture);
-    }
-
-    public jump() {
-        this.velocityY = -20;
-    }
-
-    draw(delta: number): void {
-        this._texture.y = this.y;
+        this._initTexture();
+        this._initKeyboard();
     }
 
     update(delta: number): void {
-        this.velocityY += delta;
-        this.y += this.velocityY * delta;
+        this.velocityY += GameSettings.GRAVITY;
+        this.y += this.velocityY;
 
-        if (this.y >= 400) {
-            this.jump();
+        if (this.y > GameSettings.STAGE_HEIGHT - Player.WIDTH / 2) {
+            this.y = GameSettings.STAGE_HEIGHT - Player.WIDTH / 2;
+
+            // bounce
+            this.velocityY = (-this.velocityY * 2) / 3;
+        }
+
+        if (this.y < Player.WIDTH / 2) {
+            this.y = Player.WIDTH / 2;
+
+            // stop
+            this.velocityY = 0;
+        }
+
+        // this surely can be done way better, but it's a simple game, so no need to sweat
+        this.hitbox.rectangles[0].y = this.y;
+    }
+
+    private _initTexture() {
+        this._texture = new Graphics();
+
+        this._texture.beginFill(0xffffff);
+        this._texture.drawCircle(0, 0, Player.WIDTH / 2);
+        this._texture.endFill();
+
+        this.addChild(this._texture);
+    }
+
+    private _initKeyboard() {
+        //Attach event listeners
+        const downListener = this._downHandler.bind(this);
+
+        window.addEventListener('keydown', downListener, false);
+    }
+
+    private _downHandler(event: KeyboardEvent) {
+        if (event.key == 'ArrowUp') {
+            this.velocityY = -10;
         }
     }
 }

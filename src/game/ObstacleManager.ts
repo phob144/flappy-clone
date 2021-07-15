@@ -1,46 +1,54 @@
 import * as PIXI from 'pixi.js';
-import { IDrawable } from './IDrawable';
+import { Container } from 'pixi.js';
+import { Hitbox } from './Hitbox';
 import { IUpdatable } from './IUpdatable';
 import { Obstacle } from './Obstacle';
 import { Timer } from './Timer';
 
-export class ObstacleManager implements IUpdatable, IDrawable {
+export class ObstacleManager extends Container implements IUpdatable {
     private _queue: Obstacle[];
     private _timer: Timer;
 
-    private _app: PIXI.Application;
+    constructor(interval: number) {
+        super();
 
-    constructor(interval: number, app: PIXI.Application) {
         this._queue = [];
-        this._timer = new Timer(interval, this.enqueueObstacle);
-
-        this._app = app;
+        this._timer = new Timer(interval);
     }
 
     private enqueueObstacle() {
-        this._queue.push(Obstacle.createRandomObstacle(this._app));
+        let obstacle = Obstacle.createRandomObstacle();
+
+        this._queue.push(obstacle);
+        this.addChild(obstacle);
     }
 
-    private dequeueObstacle() {
-        let obstacle = this._queue.shift();
-    }
-
-    draw(delta: number): void {
+    public checkCollision(hitbox: Hitbox): boolean {
         for (let i = 0; i < this._queue.length; i++) {
-            this._queue[i].draw(delta);
+            if (this._queue[i].hitbox.areColliding(hitbox)) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     update(delta: number): void {
         this._timer.update(delta);
 
+        if (this._timer.elapsed()) {
+            this.enqueueObstacle();
+        }
+
         for (let i = 0; i < this._queue.length; i++) {
             this._queue[i].update(delta);
         }
 
-        // delete if outside of the window
-        // if (this._queue[this._queue.length - 1].x <= -Obstacle.WIDTH) {
-        //     this.dequeueObstacle();
-        // }
+        // bruteforce unloading
+        if (this._queue.length >= 4) {
+            let obstacle = this._queue.shift();
+
+            this.removeChild(obstacle);
+        }
     }
 }

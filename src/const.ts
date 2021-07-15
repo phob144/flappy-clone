@@ -1,6 +1,10 @@
-const GRAVITY: number = 9.81;
+export class GameSettings {
 
-const STAGE_WIDTH: number = 800;
-const STAGE_HEIGHT: number = 600;
+    public static readonly GRAVITY: number = 0.6;
 
-const OBSTACLE_VELOCITY: number = 2;
+    public static readonly STAGE_WIDTH: number = 800;
+    public static readonly STAGE_HEIGHT: number = 600;
+
+    public static readonly OBSTACLE_VELOCITY: number = 2;
+}
+
