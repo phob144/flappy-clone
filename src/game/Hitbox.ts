@@ -28,6 +28,7 @@ export class Hitbox {
         rect1: Rectangle,
         rect2: Rectangle
     ): boolean {
+        console.log(rect1, rect2)
         let result =
             rect1.x + rect1.width > rect2.x &&
             rect1.x < rect2.x + rect2.width &&

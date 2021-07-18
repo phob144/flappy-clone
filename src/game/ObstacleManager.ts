@@ -17,6 +17,10 @@ export class ObstacleManager extends Container implements IUpdatable {
     }
 
     private enqueueObstacle() {
+        /*
+        the process of creating an obstacle with property gapHeight which is essential for ObstacleManager but invisible for it,
+        cause its implemented inside Obstacle, makes it harder to modify for gaming experience
+         */
         let obstacle = Obstacle.createRandomObstacle();
 
         this._queue.push(obstacle);

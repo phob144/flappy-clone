@@ -47,6 +47,10 @@ export class Player extends Container implements IUpdatable {
         }
 
         // this surely can be done way better, but it's a simple game, so no need to sweat
+        /*
+        But you could again, add this hitbox as a child, or use the built in https://pixijs.download/dev/docs/PIXI.Container.html#getBounds,
+        and move the areColliding and areRectanglesColliding into an util static class
+         */
         this.hitbox.rectangles[0].y = this.y;
     }
 

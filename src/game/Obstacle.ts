@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { Graphics, Rectangle, Container } from 'pixi.js';
-import { Hitbox } from './Hitbox';
-import { IUpdatable } from './IUpdatable';
-import { GameSettings } from '../const';
-import { Random } from '../utils/Random';
+import {Graphics, Rectangle, Container} from 'pixi.js';
+import {Hitbox} from './Hitbox';
+import {IUpdatable} from './IUpdatable';
+import {GameSettings} from '../const';
+import {Random} from '../utils/Random';
 
 export class Obstacle extends Container implements IUpdatable {
     public static readonly WIDTH = 100;
@@ -21,7 +21,15 @@ export class Obstacle extends Container implements IUpdatable {
         this.x = GameSettings.STAGE_WIDTH + Obstacle.WIDTH;
         this.y = 0;
 
-        this._velocityX = -10;
+        /*
+        one of the most important things in creating a game is to put out all "interesting" properties,
+        so a Game designer can modify them to make the game more interesting for the player.
+        We wont always know which things they would like to change but for sure
+        _velocityX is one of the key game modifiers
+        Lets say the obstacles are too fast, I will modify _velocityX for -10 to -5, make them 2x slower, the game will stop working correctly
+        Knowing how to build a game/app with places prepared so they can be modified is a good skill to have :)
+         */
+        this._velocityX = -15;
 
         const topRect = new Rectangle(this.x, 0, Obstacle.WIDTH, gapY);
         const bottomRect = new Rectangle(
@@ -57,6 +65,9 @@ export class Obstacle extends Container implements IUpdatable {
         this.addChild(this._bottomTexture);
     }
 
+    /*
+    this is a strange concept, a static method which generates an instance of a class of itself, maybe this methods should be in the ObstacleManager? as it manages (creates/destroys/updates) the obstacles
+     */
     public static createRandomObstacle(): Obstacle {
         const gapHeight = 600 / 4;
 
@@ -67,6 +78,9 @@ export class Obstacle extends Container implements IUpdatable {
         this.x += this._velocityX;
 
         // this surely can be done way better, but it's a simple game, so no need to sweat
+        /*
+        same as in Player.ts L:51
+         */
         this.hitbox.rectangles[0].x = this.x;
         this.hitbox.rectangles[1].x = this.x;
     }
